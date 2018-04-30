@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, AsyncStorage } from 'react-native';
+import uuidv4 from 'uuid/v4';
 
 const styles = StyleSheet.create({});
 
@@ -36,11 +37,18 @@ class UserCreationScreen extends React.Component {
         this.setState({ createButtonDisabled: true });
 
         try {
-            let usernames = JSON.parse(await AsyncStorage.getItem('users')) || [];
-            usernames.push(this.state.username);
-            let usernameObjects = Array.from(new Set(usernames)).map((un, i) => ({ key: i, username: un }));
+            // await AsyncStorage.removeItem('users');
 
-            await AsyncStorage.setItem('users', JSON.stringify(usernameObjects));
+            let users = JSON.parse(await AsyncStorage.getItem('users')) || [];
+            if (users.map((u) => u.username).indexOf(this.state.username) === -1) {
+                users.push({
+                    key: uuidv4(),
+                    username: this.state.username
+                });
+    
+                await AsyncStorage.setItem('users', JSON.stringify(users));
+            }
+            
             this.props.navigation.goBack();
         } catch (error) {
             console.log(error);

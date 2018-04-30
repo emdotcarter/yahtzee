@@ -27,6 +27,8 @@ class UserSelectionScreen extends React.Component {
             return <Text>No users found, please create one.</Text>
         }
 
+        console.log(this.state.users);
+
         return (
             <List>
                 <FlatList
