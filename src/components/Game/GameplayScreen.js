@@ -19,10 +19,20 @@ class GameplayScreen extends React.Component {
         };
     }
 
-    _onRoll = () => {}
+    _onRoll = () => {
+        this.setState({
+            diceValues: Array.from({ length: 5 }, () => Math.floor(Math.random() * 6) + 1)
+        });
+    }
 
     _renderDie = (index) => (
         <Image
+            style={{
+                flex: 1,
+                width:undefined,
+                height:undefined,
+                resizeMode:'contain',
+            }}
             source={this._diceImages[this.state.diceValues[index]]}
         />
     )
@@ -31,7 +41,7 @@ class GameplayScreen extends React.Component {
         return (
             <View style={{ flex: 1, flexDirection: 'column' }}>
                 <Text>Current player: {this.state.user.username}</Text>
-                <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap' }}>
+                <View style={{ flex: 1, flexDirection: 'row' }}>
                     {this._renderDie(0)}
                     {this._renderDie(1)}
                     {this._renderDie(2)}
