@@ -37,8 +37,6 @@ class UserCreationScreen extends React.Component {
         this.setState({ createButtonDisabled: true });
 
         try {
-            // await AsyncStorage.removeItem('users');
-
             let users = JSON.parse(await AsyncStorage.getItem('users')) || [];
             if (users.map((u) => u.username).indexOf(this.state.username) === -1) {
                 users.push({
