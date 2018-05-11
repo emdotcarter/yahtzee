@@ -29,9 +29,9 @@ class GameplayScreen extends React.Component {
         <Image
             style={{
                 flex: 1,
-                width:undefined,
-                height:undefined,
-                resizeMode:'contain',
+                width: undefined,
+                height: undefined,
+                resizeMode: 'contain',
             }}
             source={this._diceImages[this.state.diceValues[index]]}
         />
@@ -41,7 +41,10 @@ class GameplayScreen extends React.Component {
         return (
             <View style={{ flex: 1, flexDirection: 'column' }}>
                 <Text>Current player: {this.state.user.username}</Text>
-                <View style={{ flex: 1, flexDirection: 'row' }}>
+                <View style={{ flex: 3/4 }}>
+                    <Text>Placeholder</Text>
+                </View>
+                <View style={{ flex: 1/4, flexDirection: 'row' }}>
                     {this._renderDie(0)}
                     {this._renderDie(1)}
                     {this._renderDie(2)}
