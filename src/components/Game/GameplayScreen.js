@@ -13,15 +13,22 @@ class GameplayScreen extends React.Component {
 
     constructor(props) {
         super(props);
+
         this.state = {
             user: this.props.navigation.getParam('user', null),
-            diceValues: [1, 1, 1, 1, 1],
+            diceValues: this._diceRoll(),
+            rollsRemaining: 2,
         };
+    }
+
+    _diceRoll = () => {
+        return Array.from({ length: 5 }, () => Math.floor(Math.random() * 6) + 1)
     }
 
     _onRoll = () => {
         this.setState({
-            diceValues: Array.from({ length: 5 }, () => Math.floor(Math.random() * 6) + 1)
+            diceValues: this._diceRoll(),
+            rollsRemaining: this.state.rollsRemaining - 1,
         });
     }
 
@@ -41,10 +48,15 @@ class GameplayScreen extends React.Component {
         return (
             <View style={{ flex: 1, flexDirection: 'column' }}>
                 <Text>Current player: {this.state.user.username}</Text>
-                <View style={{ flex: 3/4 }}>
+                <View style={{ flex: 3 / 4 }}>
                     <Text>Placeholder</Text>
+                    <Button
+                        title='Score!'
+                        onPress={() => {this.setState({ rollsRemaining: 3 })}}
+                        disabled={this.state.rollsRemaining > 0}
+                    />
                 </View>
-                <View style={{ flex: 1/4, flexDirection: 'row' }}>
+                <View style={{ flex: 1 / 4, flexDirection: 'row' }}>
                     {this._renderDie(0)}
                     {this._renderDie(1)}
                     {this._renderDie(2)}
@@ -54,6 +66,7 @@ class GameplayScreen extends React.Component {
                 <Button
                     title='Roll!'
                     onPress={this._onRoll}
+                    disabled={this.state.rollsRemaining === 0}
                 />
             </View>
         );
