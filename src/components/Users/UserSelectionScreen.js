@@ -20,6 +20,19 @@ class UserSelectionScreen extends React.Component {
             });
     }
 
+    _pressItem = (item) => {
+        this.props.navigation.navigate('Gameplay', {
+            user: item
+        });
+    }
+
+    _renderItem = ({ item }) => (
+        <ListItem
+            title={item.username}
+            onPress={() => this._pressItem(item)}
+        />
+    )
+
     render() {
         if (this.state.isLoading) {
             return <Text>Loading...</Text>
@@ -27,17 +40,11 @@ class UserSelectionScreen extends React.Component {
             return <Text>No users found, please create one.</Text>
         }
 
-        console.log(this.state.users);
-
         return (
             <List>
                 <FlatList
                     data={this.state.users}
-                    renderItem={({ item }) => (
-                        <ListItem
-                            title={item.username}
-                        />
-                    )}
+                    renderItem={this._renderItem}
                 />
             </List>
         );

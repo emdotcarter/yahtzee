@@ -2,8 +2,9 @@ import React from 'react';
 import { StyleSheet, Button, View } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 
-import UserSelectionScreen from './src/components/Users/UserSelectionScreen'
-import UserCreationScreen from './src/components/Users/UserCreationScreen'
+import UserSelectionScreen from './src/components/Users/UserSelectionScreen';
+import UserCreationScreen from './src/components/Users/UserCreationScreen';
+import GameplayScreen from './src/components/Game/GameplayScreen';
 
 export default class App extends React.Component {
   render() {
@@ -38,6 +39,9 @@ const RootStack = StackNavigator(
     },
     UserCreation: {
       screen: UserCreationScreen,
+    },
+    Gameplay: {
+      screen: GameplayScreen,
     },
   },
   {
