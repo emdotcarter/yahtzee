@@ -26,6 +26,106 @@ class GameplayScreen extends React.Component {
             })),
             rollsRemaining: this.MAX_DICE_ROLLS,
             turnScored: true,
+            score: [
+                {
+                    key: 'aces',
+                    displayName: 'Aces',
+                    value: undefined,
+                    scorable: true,
+                    visible: true,
+                },
+                {
+                    key: 'twos',
+                    displayName: 'Twos',
+                    value: undefined,
+                    scorable: true,
+                    visible: true,
+                },
+                {
+                    key: 'threes',
+                    displayName: 'Threes',
+                    value: undefined,
+                    scorable: true,
+                    visible: true,
+                },
+                {
+                    key: 'fours',
+                    displayName: 'Fours',
+                    value: undefined,
+                    scorable: true,
+                    visible: true,
+                },
+                {
+                    key: 'fives',
+                    displayName: 'Fives',
+                    value: undefined,
+                    scorable: true,
+                    visible: true,
+                },
+                {
+                    key: 'sixes',
+                    displayName: 'Sixes',
+                    value: undefined,
+                    scorable: true,
+                    visible: true,
+                },
+                {
+                    key: 'topBonus',
+                    displayName: 'Top Section Bonus',
+                    value: 0,
+                    scorable: false,
+                    visible: true,
+                },
+                {
+                    key: 'threeOfAKind',
+                    displayName: '3 of a Kind',
+                    value: 0,
+                    scorable: true,
+                    visible: true,
+                },
+                {
+                    key: 'fourOfAKind',
+                    displayName: '4 of a Kind',
+                    value: 0,
+                    scorable: true,
+                    visible: true,
+                },
+                {
+                    key: 'fullHouse',
+                    displayName: 'Full House',
+                    value: 0,
+                    scorable: true,
+                    visible: true,
+                },
+                {
+                    key: 'smallStraight',
+                    displayName: 'Small Straight',
+                    value: 0,
+                    scorable: true,
+                    visible: true,
+                },
+                {
+                    key: 'largeStraight',
+                    displayName: 'Large Straight',
+                    value: 0,
+                    scorable: true,
+                    visible: true,
+                },
+                {
+                    key: 'yahtzee',
+                    displayName: 'YAHTZEE!',
+                    value: 0,
+                    scorable: true,
+                    visible: true,
+                },
+                {
+                    key: 'chance',
+                    displayName: 'Chance',
+                    value: 0,
+                    scorable: true,
+                    visible: true,
+                },
+            ],
         };
     }
 
@@ -82,16 +182,19 @@ class GameplayScreen extends React.Component {
         </TouchableOpacity>
     )
 
+
+    _renderScoreboard = () => (
+        this.state.score.filter((scoreEntry) => scoreEntry.visible).map((scoreEntry) => (
+            <Text key={scoreEntry.key}>{scoreEntry.displayName}</Text>
+        ))
+    )
+
     render() {
         return (
             <View style={{ flex: 1, flexDirection: 'column' }}>
                 <Text>Current player: {this.state.user.username}</Text>
                 <View style={{ flex: 3 / 4 }}>
-                    <Button
-                        title='Score!'
-                        onPress={this._onScore}
-                        disabled={this.state.turnScored}
-                    />
+                    {this._renderScoreboard()}
                 </View>
                 <View style={{ flex: 1 / 4, flexDirection: 'row' }}>
                     {Array.from({ length: this.DICE_COUNT }, (x, index) => this._renderDie(index))}
