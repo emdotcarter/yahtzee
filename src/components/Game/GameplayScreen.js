@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Button, Image } from 'react-native';
+import { View, Text, Button, Image, TouchableOpacity } from 'react-native';
 
 class GameplayScreen extends React.Component {
     _diceImages = {
@@ -11,37 +11,75 @@ class GameplayScreen extends React.Component {
         6: require('./img/die-6.png'),
     }
 
+    DICE_COUNT = 5
+    N_SIDED_DICE = 6
+    MAX_DICE_ROLLS = 3
+
     constructor(props) {
         super(props);
 
         this.state = {
             user: this.props.navigation.getParam('user', null),
-            diceValues: this._diceRoll(),
-            rollsRemaining: 2,
+            dice: Array.from({ length: this.DICE_COUNT }, () => ({
+                value: this._rollDie(),
+                locked: false,
+            })),
+            rollsRemaining: this.MAX_DICE_ROLLS,
+            turnScored: true,
         };
     }
 
-    _diceRoll = () => {
-        return Array.from({ length: 5 }, () => Math.floor(Math.random() * 6) + 1)
+    _rollDie = () => {
+        return Math.floor(Math.random() * this.N_SIDED_DICE) + 1;
     }
 
-    _onRoll = () => {
-        this.setState({
-            diceValues: this._diceRoll(),
-            rollsRemaining: this.state.rollsRemaining - 1,
+    _onLock = (index) => {
+        this.setState((prevState) => {
+            prevState.dice[index].locked = !prevState.dice[index].locked;
+            return prevState;
         });
     }
 
+    _onRoll = () => {
+        this.setState((prevState) => ({
+            dice: prevState.dice.map((die) => ({
+                value: (die.locked ? die.value : this._rollDie()),
+                locked: (prevState.rollsRemaining - 1 === 0 ? false : die.locked),
+            })),
+            rollsRemaining: prevState.rollsRemaining - 1,
+            turnScored: false,
+        }));
+    }
+
+    _onScore = () => {
+        this.setState((prevState) => ({
+            rollsRemaining: this.MAX_DICE_ROLLS,
+            turnScored: true,
+        }));
+    }
+
     _renderDie = (index) => (
-        <Image
+        <TouchableOpacity
+            key={index}
+            onPress={() => this._onLock(index)}
+            disabled={this.state.rollsRemaining === 0 || this.state.turnScored}
             style={{
                 flex: 1,
-                width: undefined,
-                height: undefined,
-                resizeMode: 'contain',
             }}
-            source={this._diceImages[this.state.diceValues[index]]}
-        />
+        >
+            <Image
+                style={{
+                    flex: 1,
+                    height: undefined,
+                    width: undefined,
+                    resizeMode: 'contain',
+                    borderWidth: (this.state.dice[index].locked ? 1 : 0),
+                    borderColor: '#FF0000',
+                }}
+                source={this._diceImages[this.state.dice[index].value]}
+                fadeDuration={0}
+            />
+        </TouchableOpacity>
     )
 
     render() {
@@ -49,24 +87,19 @@ class GameplayScreen extends React.Component {
             <View style={{ flex: 1, flexDirection: 'column' }}>
                 <Text>Current player: {this.state.user.username}</Text>
                 <View style={{ flex: 3 / 4 }}>
-                    <Text>Placeholder</Text>
                     <Button
                         title='Score!'
-                        onPress={() => {this.setState({ rollsRemaining: 3 })}}
-                        disabled={this.state.rollsRemaining > 0}
+                        onPress={this._onScore}
+                        disabled={this.state.turnScored}
                     />
                 </View>
                 <View style={{ flex: 1 / 4, flexDirection: 'row' }}>
-                    {this._renderDie(0)}
-                    {this._renderDie(1)}
-                    {this._renderDie(2)}
-                    {this._renderDie(3)}
-                    {this._renderDie(4)}
+                    {Array.from({ length: this.DICE_COUNT }, (x, index) => this._renderDie(index))}
                 </View>
                 <Button
                     title='Roll!'
                     onPress={this._onRoll}
-                    disabled={this.state.rollsRemaining === 0}
+                    disabled={this.state.rollsRemaining === 0 && !this.state.turnScored}
                 />
             </View>
         );
