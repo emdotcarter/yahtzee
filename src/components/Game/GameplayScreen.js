@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, Button, Image, TouchableOpacity } from 'react-native';
+import Scoring from './Scoring'
 
 class GameplayScreen extends React.Component {
     _diceImages = {
@@ -31,42 +32,48 @@ class GameplayScreen extends React.Component {
                     key: 'aces',
                     displayName: 'Aces',
                     value: undefined,
-                    scorable: true,
+                    transientScore: undefined,
+                    score: undefined,
                     visible: true,
                 },
                 {
                     key: 'twos',
                     displayName: 'Twos',
                     value: undefined,
-                    scorable: true,
+                    transientScore: undefined,
+                    score: undefined,
                     visible: true,
                 },
                 {
                     key: 'threes',
                     displayName: 'Threes',
                     value: undefined,
-                    scorable: true,
+                    transientScore: undefined,
+                    score: undefined,
                     visible: true,
                 },
                 {
                     key: 'fours',
                     displayName: 'Fours',
                     value: undefined,
-                    scorable: true,
+                    transientScore: undefined,
+                    score: undefined,
                     visible: true,
                 },
                 {
                     key: 'fives',
                     displayName: 'Fives',
                     value: undefined,
-                    scorable: true,
+                    transientScore: undefined,
+                    score: undefined,
                     visible: true,
                 },
                 {
                     key: 'sixes',
                     displayName: 'Sixes',
                     value: undefined,
-                    scorable: true,
+                    transientScore: undefined,
+                    score: undefined,
                     visible: true,
                 },
                 {
@@ -80,49 +87,56 @@ class GameplayScreen extends React.Component {
                     key: 'threeOfAKind',
                     displayName: '3 of a Kind',
                     value: 0,
-                    scorable: true,
+                    transientScore: undefined,
+                    score: undefined,
                     visible: true,
                 },
                 {
                     key: 'fourOfAKind',
                     displayName: '4 of a Kind',
                     value: 0,
-                    scorable: true,
+                    transientScore: undefined,
+                    score: undefined,
                     visible: true,
                 },
                 {
                     key: 'fullHouse',
                     displayName: 'Full House',
                     value: 0,
-                    scorable: true,
+                    transientScore: undefined,
+                    score: undefined,
                     visible: true,
                 },
                 {
                     key: 'smallStraight',
                     displayName: 'Small Straight',
                     value: 0,
-                    scorable: true,
+                    transientScore: undefined,
+                    score: undefined,
                     visible: true,
                 },
                 {
                     key: 'largeStraight',
                     displayName: 'Large Straight',
                     value: 0,
-                    scorable: true,
+                    transientScore: undefined,
+                    score: undefined,
                     visible: true,
                 },
                 {
                     key: 'yahtzee',
                     displayName: 'YAHTZEE!',
                     value: 0,
-                    scorable: true,
+                    transientScore: undefined,
+                    score: undefined,
                     visible: true,
                 },
                 {
                     key: 'chance',
                     displayName: 'Chance',
                     value: 0,
-                    scorable: true,
+                    transientScore: undefined,
+                    score: undefined,
                     visible: true,
                 },
             ],
@@ -131,6 +145,26 @@ class GameplayScreen extends React.Component {
 
     _rollDie = () => {
         return Math.floor(Math.random() * this.N_SIDED_DICE) + 1;
+    }
+
+    _clearTransientScores = () => {
+        this.setState((prevState) => ({
+            score: prevState.score.map((prevScore) => {
+                prevScore.transientScore = 0;
+                return prevScore;
+            }),
+        }));
+    }
+
+    _calculateTransientScores = () => {
+        transientScores = Scoring.score(this.state.dice.map(x => x.value))
+
+        this.setState((prevState) => ({
+            score: prevState.score.map((prevScore) => {
+                prevScore.transientScore = transientScores[prevScore.key];
+                return prevScore;
+            }),
+        }));
     }
 
     _onLock = (index) => {
@@ -148,10 +182,11 @@ class GameplayScreen extends React.Component {
             })),
             rollsRemaining: prevState.rollsRemaining - 1,
             turnScored: false,
-        }));
+        }), this._calculateTransientScores);
     }
 
     _onScore = () => {
+        this._clearTransientScores();
         this.setState((prevState) => ({
             rollsRemaining: this.MAX_DICE_ROLLS,
             turnScored: true,
@@ -182,10 +217,25 @@ class GameplayScreen extends React.Component {
         </TouchableOpacity>
     )
 
+    _displayScore = (scoreObject) => {
+        if (scoreObject.score) {
+            return scoreObject.score
+        } else if (scoreObject.transientScore) {
+            return scoreObject.transientScore
+        }
+    }
 
     _renderScoreboard = () => (
-        this.state.score.filter((scoreEntry) => scoreEntry.visible).map((scoreEntry) => (
-            <Text key={scoreEntry.key}>{scoreEntry.displayName}</Text>
+        this.state.score.filter((scoreObject) => scoreObject.visible).map((scoreObject) => (
+            <View key={scoreObject.key} style={{ flex: 1, flexDirection: 'row' }}>
+                <Text style={{ flex: 2 / 5 }}>{scoreObject.displayName}</Text>
+                <Text style={{ flex: 2 / 5 }}>Score: {this._displayScore(scoreObject)}</Text>
+                <Button
+                    title='Score'
+                    style={{ flex: 1 / 5 }}
+                    onPress={this._onScore}
+                />
+            </View>
         ))
     )
 
