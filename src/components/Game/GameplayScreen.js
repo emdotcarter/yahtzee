@@ -31,111 +31,98 @@ class GameplayScreen extends React.Component {
                 {
                     key: 'aces',
                     displayName: 'Aces',
-                    value: undefined,
-                    transientScore: undefined,
+                    transientScore: 0,
                     score: undefined,
                     visible: true,
                 },
                 {
                     key: 'twos',
                     displayName: 'Twos',
-                    value: undefined,
-                    transientScore: undefined,
+                    transientScore: 0,
                     score: undefined,
                     visible: true,
                 },
                 {
                     key: 'threes',
                     displayName: 'Threes',
-                    value: undefined,
-                    transientScore: undefined,
+                    transientScore: 0,
                     score: undefined,
                     visible: true,
                 },
                 {
                     key: 'fours',
                     displayName: 'Fours',
-                    value: undefined,
-                    transientScore: undefined,
+                    transientScore: 0,
                     score: undefined,
                     visible: true,
                 },
                 {
                     key: 'fives',
                     displayName: 'Fives',
-                    value: undefined,
-                    transientScore: undefined,
+                    transientScore: 0,
                     score: undefined,
                     visible: true,
                 },
                 {
                     key: 'sixes',
                     displayName: 'Sixes',
-                    value: undefined,
-                    transientScore: undefined,
+                    transientScore: 0,
                     score: undefined,
                     visible: true,
                 },
                 {
                     key: 'topBonus',
                     displayName: 'Top Section Bonus',
-                    value: 0,
-                    scorable: false,
+                    transientScore: 0,
+                    score: false,
                     visible: true,
                 },
                 {
                     key: 'threeOfAKind',
                     displayName: '3 of a Kind',
-                    value: 0,
-                    transientScore: undefined,
+                    transientScore: 0,
                     score: undefined,
                     visible: true,
                 },
                 {
                     key: 'fourOfAKind',
                     displayName: '4 of a Kind',
-                    value: 0,
-                    transientScore: undefined,
+                    transientScore: 0,
                     score: undefined,
                     visible: true,
                 },
                 {
                     key: 'fullHouse',
                     displayName: 'Full House',
-                    value: 0,
-                    transientScore: undefined,
+                    transientScore: 0,
                     score: undefined,
                     visible: true,
                 },
                 {
                     key: 'smallStraight',
                     displayName: 'Small Straight',
-                    value: 0,
-                    transientScore: undefined,
+                    transientScore: 0,
                     score: undefined,
                     visible: true,
                 },
                 {
                     key: 'largeStraight',
                     displayName: 'Large Straight',
-                    value: 0,
-                    transientScore: undefined,
+                    transientScore: 0,
                     score: undefined,
                     visible: true,
                 },
                 {
                     key: 'yahtzee',
                     displayName: 'YAHTZEE!',
-                    value: 0,
-                    transientScore: undefined,
+                    transientScore: 0,
                     score: undefined,
                     visible: true,
                 },
                 {
                     key: 'chance',
                     displayName: 'Chance',
-                    value: 0,
-                    transientScore: undefined,
+                    transientScore: 0,
                     score: undefined,
                     visible: true,
                 },
@@ -161,7 +148,7 @@ class GameplayScreen extends React.Component {
 
         this.setState((prevState) => ({
             score: prevState.score.map((prevScore) => {
-                prevScore.transientScore = transientScores[prevScore.key];
+                prevScore.transientScore = transientScores[prevScore.key] || 0;
                 return prevScore;
             }),
         }));
@@ -185,12 +172,15 @@ class GameplayScreen extends React.Component {
         }), this._calculateTransientScores);
     }
 
-    _onScore = () => {
-        this._clearTransientScores();
+    _onScore = (key) => {
         this.setState((prevState) => ({
+            score: prevState.score.map((prevScore) => {
+                prevScore.score = (prevScore.key === key ? prevScore.transientScore : prevScore.score);
+                return prevScore;
+            }),
             rollsRemaining: this.MAX_DICE_ROLLS,
             turnScored: true,
-        }));
+        }), this._clearTransientScores);
     }
 
     _renderDie = (index) => (
@@ -220,7 +210,7 @@ class GameplayScreen extends React.Component {
     _displayScore = (scoreObject) => {
         if (scoreObject.score) {
             return scoreObject.score
-        } else if (scoreObject.transientScore) {
+        } else {
             return scoreObject.transientScore
         }
     }
@@ -233,7 +223,8 @@ class GameplayScreen extends React.Component {
                 <Button
                     title='Score'
                     style={{ flex: 1 / 5 }}
-                    onPress={this._onScore}
+                    onPress={() => this._onScore(scoreObject.key)}
+                    disabled={scoreObject.score != null}
                 />
             </View>
         ))
