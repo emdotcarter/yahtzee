@@ -174,6 +174,10 @@ class GameplayScreen extends React.Component {
 
     _onScore = (key) => {
         this.setState((prevState) => ({
+            dice: prevState.dice.map((prevDie) => ({
+                value: prevDie.value,
+                locked: false,
+            })),
             score: prevState.score.map((prevScore) => {
                 prevScore.score = (prevScore.key === key ? prevScore.transientScore : prevScore.score);
                 return prevScore;

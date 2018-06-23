@@ -43,8 +43,11 @@ class Scoring {
             .filter((count) => count >= targetCount)
             .length > 0;
 
-        if (pointOverride) return pointOverride;
-        return (conditionMet ? values.reduce((a, b) => a + b, 0) : 0);
+        if (conditionMet) {
+            return pointOverride || values.reduce((a, b) => a + b, 0);
+        }
+
+        return 0;
     }
 
     static _fullHouse = (values) => {
