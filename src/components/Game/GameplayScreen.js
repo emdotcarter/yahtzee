@@ -241,6 +241,7 @@ class GameplayScreen extends React.Component {
                 <View style={{ flex: 3 / 4 }}>
                     {this._renderScoreboard()}
                 </View>
+                <Text>Total: {this.state.score.map((scoreObject) => scoreObject.score).filter((score) => score || 0).reduce((a, b) => a + b, 0)}</Text>
                 <View style={{ flex: 1 / 4, flexDirection: 'row' }}>
                     {Array.from({ length: this.DICE_COUNT }, (x, index) => this._renderDie(index))}
                 </View>
